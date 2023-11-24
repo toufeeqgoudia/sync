@@ -1,11 +1,10 @@
-from rest_framework import status, generics
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status
+from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from .serializers import UserSerializer
 from .models import User
@@ -41,3 +40,11 @@ class LogoutView(APIView):
     def post(self, request):
         logout(request)
         return Response({'message': 'Logged out successfully'})
+    
+
+@permission_classes([IsAuthenticated])
+class UserView(APIView):
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
