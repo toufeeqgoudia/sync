@@ -35,6 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
     fullname = models.CharField(max_length=255)
+    colour = models.CharField(max_length=20, blank=True, null=True)
     password = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -47,4 +48,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def __str__(self):
-        return self.fullname
+        return self.email
