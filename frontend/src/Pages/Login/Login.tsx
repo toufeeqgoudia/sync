@@ -7,7 +7,7 @@ interface FormData {
   password: string;
 }
 
-const Login = () => {
+const Login: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
@@ -36,7 +36,13 @@ const Login = () => {
         password: formData.password,
       });
 
-      localStorage.setItem("token", response.data);
+      localStorage.setItem("token", response.data.token);
+
+      console.log(response)
+
+      if (response.status === 200) {
+        navigate("/dashboard") // CHANGE TO ACTUAL END POINT
+      }
     } catch {
       setFetchError("Invalid credentials");
     }

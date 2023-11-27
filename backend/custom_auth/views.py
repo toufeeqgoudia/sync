@@ -42,8 +42,8 @@ class LogoutView(APIView):
         return Response({'message': 'Logged out successfully'})
     
 
-@permission_classes([IsAuthenticated])
 class UserView(APIView):
+    @permission_classes([IsAuthenticated])
     def get(self, request):
         user = request.user
         serializer = UserSerializer(user)

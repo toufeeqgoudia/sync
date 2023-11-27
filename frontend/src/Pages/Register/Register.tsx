@@ -9,7 +9,7 @@ interface FormData {
   password: string;
 }
 
-const Register = () => {
+const Register: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     fullname: "",
     username: "",
@@ -47,7 +47,11 @@ const Register = () => {
         password: formData.password,
       });
 
-      localStorage.setItem("token", response.data);
+      localStorage.setItem("token", response.data.token);
+
+      if (response.status === 200) {
+        navigate("/register/create-board");
+      }
     } catch {
       setFetchError("Invalid credentials");
     }
