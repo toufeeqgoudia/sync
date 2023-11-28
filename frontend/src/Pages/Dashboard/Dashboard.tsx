@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { BoardProvider } from "../../Context/BoardProvider";
 import TopNav from "../../Components/TopNav";
 import SideNav from "../../Components/SideNav";
 import Boards from "../Boards/Boards";
@@ -12,6 +13,7 @@ const Dashboard: React.FC = () => {
     <>
       <TopNav />
       <SideNav />
+      <BoardProvider>
       <Routes>
         <Route path="/boards" element={<Boards />} />
         <Route path="/edit-board" element={<EditBoard />} />
@@ -19,6 +21,7 @@ const Dashboard: React.FC = () => {
         <Route path="/members" element={<Members />} />
         <Route path="/calendar" element={<Calendar />} />
       </Routes>
+      </BoardProvider>
     </>
   );
 };
