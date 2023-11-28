@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { instance } from "../../Utils/apiServices";
 
 interface FormData {
   fullname: string;
@@ -35,14 +35,14 @@ const Register: React.FC = () => {
     try {
       setLoading(true);
 
-      await axios.post("http://127.0.0.1:8000/auth/register/", {
+      await instance.post("/auth/register/", {
         fullname: formData.fullname,
         username: formData.username,
         email: formData.email,
         password: formData.password,
       });
 
-      const response = await axios.post("http://127.0.0.1:8000/auth/login/", {
+      const response = await instance.post("/auth/login/", {
         email: formData.email,
         password: formData.password,
       });
@@ -50,7 +50,8 @@ const Register: React.FC = () => {
       localStorage.setItem("token", response.data.token);
 
       if (response.status === 200) {
-        navigate("/register/create-board");
+        // navigate("/register/create-board");
+        navigate('/dashboard')
       }
     } catch {
       setFetchError("Invalid credentials");

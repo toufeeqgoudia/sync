@@ -1,8 +1,8 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
-import axios from "axios";
+import { instance } from "../Utils/apiServices";
 
 interface User {
-  id: string;
+  id: number;
   username: string;
   email: string;
   fullname: string;
@@ -29,7 +29,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const fetchUserDetails = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
+        const response = await instance.get("/auth/user/", {
           headers: { Authorization: `Token ${token}` },
         });
 

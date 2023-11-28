@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { instance } from "../../Utils/apiServices";
 
 interface FormData {
   email: string;
@@ -31,7 +31,7 @@ const Login: React.FC = () => {
     try {
       setLoading(true);
 
-      const response = await axios.post("http://127.0.0.1:8000/auth/login/", {
+      const response = await instance.post("/auth/login/", {
         email: formData.email,
         password: formData.password,
       });
@@ -41,7 +41,7 @@ const Login: React.FC = () => {
       console.log(response)
 
       if (response.status === 200) {
-        navigate("/dashboard") // CHANGE TO ACTUAL END POINT
+        navigate("/boards") // CHANGE TO ACTUAL END POINT
       }
     } catch {
       setFetchError("Invalid credentials");

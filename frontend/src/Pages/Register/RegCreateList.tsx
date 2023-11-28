@@ -1,6 +1,41 @@
+import { ChangeEvent, FormEvent, useState } from "react"
+import { instance } from "../../Utils/apiServices";
+import { useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 
+interface FormData {
+    
+}
+
 const RegCreateList: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({ title: '', description: ''})
+  const navigate = useNavigate()
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormData((prevFormData) => {
+      return {
+        ...prevFormData,
+        [e.target.name]: e.target.value,
+      }
+    })
+  }
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const token = localStorage.getItem("token")
+    try {
+      const response = await instance.post("/api/boards/" , {
+        title: formData.title,
+        description: formData.description,
+      }, { headers: {Authorization: `Token ${token}`}})
+
+      console.log('res: ', response)
+      navigate("/register/create-list")
+    } catch {
+      console.log('Error: ')
+    }
+  }
+
   return (
     <div className="max-w-screen min-h-screen px-10 flex flex-col pt-20 items-center bg-gradient-to-tr from-purple-700 from-35% via-blue-500 to-teal-300">
     <h2 className="text-6xl text-white font-bold">Welcome to Sync ツ</h2>
