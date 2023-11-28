@@ -30,18 +30,16 @@ export const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
       try {
         const membershipData = await getMemberships();
 
-        const boardsData = await fetchBoards();
-
-        const userBoardIds = membershipData
+        const userBoards = membershipData
           .filter(
-            (membership: { user: number | undefined }) =>
-              membership.user === user?.id
+            (membership: { user: { id: number | undefined; }; }) =>
+              membership.user.id === user?.id
           )
-          .map((membership: { board: unknown }) => membership.board);
+          .map((membership: { board: unknown; }) => membership.board);
 
-        const userBoards = boardsData.filter((board: { id: unknown }) =>
-          userBoardIds.includes(board.id)
-        );
+        // const userBoards = boardsData.filter((board: { id: unknown; }) =>
+        //   userBoardIds.includes(board.id)
+        // );
         setBoards(userBoards);
       } catch (error) {
         console.log("Error", error);

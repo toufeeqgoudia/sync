@@ -51,7 +51,7 @@ const Register: React.FC = () => {
 
       if (response.status === 200) {
         // navigate("/register/create-board");
-        navigate('/dashboard')
+        navigate('/boards')
       }
     } catch {
       setFetchError("Invalid credentials");

@@ -38,8 +38,6 @@ const Login: React.FC = () => {
 
       localStorage.setItem("token", response.data.token);
 
-      console.log(response)
-
       if (response.status === 200) {
         navigate("/boards") // CHANGE TO ACTUAL END POINT
       }
