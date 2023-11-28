@@ -19,7 +19,7 @@ interface Board {
 const Boards: React.FC = () => {
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [boards, setBoards] = useState<Board[]>([]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -60,17 +60,24 @@ const Boards: React.FC = () => {
   };
 
   const handleClickBoard = (boardId: number) => {
-    navigate('/edit-board', {state: boardId})
-  }
+    navigate("/edit-board", { state: boardId });
+  };
 
   return (
     <div className="max-w-screen h-screen pt-28 pl-80 flex flex-wrap bg-gradient-to-tr from-purple-700 from-35% via-blue-500 to-teal-300">
-      <div className="w-40 h-16 rounded flex items-center justify-center bg-slate-200 cursor-pointer" onClick={() => navigate('/create-board')}>
+      <div
+        className="w-40 h-16 rounded flex items-center justify-center bg-slate-200 cursor-pointer"
+        onClick={() => navigate("/create-board")}
+      >
         <p>Create new board</p>
       </div>
 
       {userBoards.map((board) => (
-        <div key={board.id} className="w-48 h-24 p-2 ml-10 rounded bg-white cursor-pointer" onClick={() => handleClickBoard(board.id)}>
+        <div
+          key={board.id}
+          className="w-48 h-24 p-2 ml-10 rounded bg-white cursor-pointer"
+          onClick={() => handleClickBoard(board.id)}
+        >
           <p className="text-base font-medium">{board.title}</p>
           <p className="text-xs">{formatPostDate(board.created_at)}</p>
           <p className="text-sm">{board.description}</p>

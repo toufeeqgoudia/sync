@@ -1,6 +1,6 @@
-import { ChangeEvent, FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { instance } from "../../Utils/apiServices"
+import { instance } from "../../Utils/apiServices";
 
 interface FormData {
   title: string;
@@ -8,40 +8,47 @@ interface FormData {
 }
 
 const CreateBoard: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({ title: '', description: '' })
-  const navigate = useNavigate()
+  const [formData, setFormData] = useState<FormData>({
+    title: "",
+    description: "",
+  });
+  const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
-        [e.target.name]: e.target.value
-      }
-    })
-  }
+        [e.target.name]: e.target.value,
+      };
+    });
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     try {
-      await instance.post('/api/boards/', {
-        title: formData.title,
-        description: formData.description,
-      }, {
-        headers: { Authorization: `Token ${token}` }
-      })
-      navigate('/boards')
+      await instance.post(
+        "/api/boards/",
+        {
+          title: formData.title,
+          description: formData.description,
+        },
+        {
+          headers: { Authorization: `Token ${token}` },
+        }
+      );
+      navigate("/boards");
     } catch (error) {
-      console.log('Error: ', error)
+      console.log("Error: ", error);
     }
-  }
+  };
 
   return (
     <div className="max-w-screen h-screen pt-28 pl-80 pr-10 flex flex-col bg-gradient-to-tr from-purple-700 from-35% via-blue-500 to-teal-300">
       <div className="w-full flex justify-between items-center">
-        <h4 className="text-lg font-semibold text-white">
-          Create Board
-        </h4>
+        <h4 className="text-lg font-semibold text-white">Create Board</h4>
       </div>
 
       <form className="w-96 flex flex-col pt-16" onSubmit={handleSubmit}>
@@ -65,7 +72,7 @@ const CreateBoard: React.FC = () => {
         </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default CreateBoard
+export default CreateBoard;
