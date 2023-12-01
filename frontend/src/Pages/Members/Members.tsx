@@ -1,34 +1,60 @@
 import { useState, useEffect } from "react";
 import { useBoards } from "../../Hooks/useBoards";
 import { getMemberships } from "../../Utils/apiServices";
+import SearchUsers from "../../Components/SearchUsers";
+
+interface Board {
+  id: number;
+  title: string;
+  description: string;
+  created_at: string;
+}
+
+interface User {
+  id: number;
+  fullname: string;
+  username: string;
+  email: string;
+  colour: string;
+}
 
 interface Memberships {
   id: number;
-  board: [];
-  user: [];
+  board: Board;
+  user: User;
 }
 
 const Members: React.FC = () => {
-  const [memberships, setMemberships] = useState<Memberships[]>([])
+  const [memberships, setMemberships] = useState<Memberships[]>([]);
+  const [selectedBoard, setSelectedBoard] = useState<number | null>();
+  const [searchResults, setSearchResults] = useState<User[]>([]);
   const { boards } = useBoards();
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      const response = await getMemberships()
-      setMemberships(response)
-    }
+    const fetchData = async () => {
+      const members = await getMemberships();
+      setMemberships(members);
+    };
 
-    fetchMembers()
-  }, [])
+    fetchData();
+  }, []);
 
-  console.log(memberships)
-  console.log('boards', boards)
+  const filteredMemberships = memberships.filter(
+    (membership) => membership.board.id === selectedBoard
+  );
+
+  const handleSearchResults = (results: User[]) => {
+    setSearchResults(results);
+  };
 
   return (
     <div className="max-w-screen h-screen pt-28 pl-80 pr-8 flex justify-evenly items-start bg-gradient-to-tr from-purple-700 from-35% via-blue-500 to-teal-300">
       <div className="w-96 h-96">
         <p className="text-lg text-white font-medium mb-2">Select board:</p>
-        <select className="w-80 p-2 mb-6 text-sm outline-none rounded-md bg-white">
+        <select
+          className="w-80 p-2 mb-6 text-sm outline-none rounded-md bg-white"
+          onChange={(e) => setSelectedBoard(Number(e.target.value))}
+        >
           <option value="">Select a Board</option>
           {boards?.map((board) => (
             <option key={board.id} value={board.id}>
@@ -37,16 +63,32 @@ const Members: React.FC = () => {
           ))}
         </select>
         <p className="text-lg text-white font-medium mb-2">Invite members:</p>
-        <form className="flex items-center">
-          <input
-            className="w-80 p-2 text-sm outline-none rounded-md bg-white"
-            type="search"
-          />
-          <button className="w-12 h-9 ml-2 bg-white rounded-md">Add</button>
-        </form>
+
+        <SearchUsers handleSearchResults={handleSearchResults} />
+
+        {searchResults.length > 0 && (
+          <ul className="mt-10">
+            {searchResults.map((user) => (
+              <li
+                key={user.id}
+                className="w-80 p-2 my-2 text-sm flex justify-between bg-white rounded-md"
+              >
+                {user.email}
+                <button>Add</button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      <div className="w-96 h-96 flex flex-col bg-white rounded-md"></div>
+      <div className="w-96 h-96 p-3 flex flex-col bg-white rounded-md">
+        <p className="text-lg font-medium mb-2">Members:</p>
+        <ul>
+          {filteredMemberships.map((member) => (
+            <li key={member.user.id}>{member.user.fullname}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

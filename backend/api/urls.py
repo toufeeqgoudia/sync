@@ -3,7 +3,8 @@ from .views import (
     BoardListCreateView, BoardDetailView,
     ListListCreateView, ListDetailView,
     CardListCreateView, CardDetailView,
-    MembershipListCreateView, MembershipDetailView
+    MembershipListCreateView, MembershipDetailView,
+    search_users
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path('cards/<int:pk>/', CardDetailView.as_view(), name='card-detail'),
     path('memberships/', MembershipListCreateView.as_view(), name='membership-list-create'),
     path('memberships/<int:pk>/', MembershipDetailView.as_view(), name='membership-detail'),
+    path('allusers/', search_users, name='all-users')
 ]

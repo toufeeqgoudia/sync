@@ -24,6 +24,24 @@ export const getMemberships = async () => {
   }
 };
 
+interface Memberships {
+  user: number;
+  board: number;
+}
+
+export const addMembership = async (data: Memberships) => {
+  try {
+    const response = await instance.post("/api/memberships/", data, {
+      headers: { Authorization: `Token ${token}` },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log("Error fetcing memberships.");
+    throw error;
+  }
+}
+
 /**
  * BOARDS
  */
@@ -67,7 +85,7 @@ export const getBoard = async (id: BoardData) => {
       headers: { Authorization: `Token ${token}` },
     });
 
-    return response.data
+    return response.data;
   } catch (error) {
     console.log("Error fetching board.");
     throw error;
@@ -88,3 +106,19 @@ export const deleteBoard = async (id: BoardId) => {
 /**
  * Lists
  */
+
+/**
+ * Search Users
+ */
+
+export const searchUsers = async () => {
+  try {
+    const response = await instance.get(`/api/allusers/`, {
+      headers: { Authorization: `Token ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching users.");
+    throw error;
+  }
+};
