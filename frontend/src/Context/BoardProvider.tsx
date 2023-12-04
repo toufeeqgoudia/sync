@@ -1,12 +1,21 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
-import { getMemberships, fetchBoards } from "../Utils/apiServices";
+import { fetchBoards } from "../Utils/apiServices";
 import { useAuth } from "../Hooks/useAuth";
+
+interface User {
+  id: number;
+  fullname: string;
+  username: string;
+  email: string;
+  colour: string;
+}
 
 interface Boards {
   id: number;
   title: string;
   description: string;
   created_at: string;
+  user: User | undefined;
 }
 
 export interface BoardContextProps {
@@ -28,18 +37,19 @@ export const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const membershipData = await getMemberships();
+        const boardData = await fetchBoards();
 
-        const userBoards = membershipData
-          .filter(
-            (membership: { user: { id: number | undefined; }; }) =>
-              membership.user.id === user?.id
-          )
-          .map((membership: { board: unknown; }) => membership.board);
+        const userBoards = boardData.filter(
+          (board: Boards) => board.user === user?.id
+        )
+      
+        // const userBoards = boardData
+        //   .filter(
+        //     (membership: { user: { id: number | undefined; }; }) =>
+        //       membership.user.id === user?.id
+        //   )
+        //   .map((membership: { board: unknown; }) => membership.board);
 
-        // const userBoards = boardsData.filter((board: { id: unknown; }) =>
-        //   userBoardIds.includes(board.id)
-        // );
         setBoards(userBoards);
       } catch (error) {
         console.log("Error", error);
@@ -48,8 +58,6 @@ export const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
 
     fetchData();
   }, [user?.id]);
-
- 
 
   return (
     <BoardContext.Provider value={{ boards }}>

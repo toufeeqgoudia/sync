@@ -5,7 +5,7 @@ from custom_auth.serializers import UserSerializer
 class BoardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
-        fields = ['id', 'title', 'description', 'created_at']
+        fields = ['id', 'title', 'description', 'created_at', 'user']
 
 
 class ListSerializer(serializers.ModelSerializer):
@@ -25,9 +25,6 @@ class CardSerializer(serializers.ModelSerializer):
 
 
 class MembershipSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    board = BoardSerializer(read_only=True)
-
     class Meta:
         model = Membership
         fields = ['user', 'board']

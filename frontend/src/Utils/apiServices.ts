@@ -14,33 +14,57 @@ export const instance = axios.create({
 export const getMemberships = async () => {
   try {
     const response = await instance.get("/api/memberships/", {
-      headers: { Authorization: `Token ${token}` },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
     });
 
     return response.data;
   } catch (error) {
-    console.log("Error fetcing memberships.");
+    console.log("Error fetching memberships.");
     throw error;
   }
 };
 
-interface Memberships {
-  user: number;
-  board: number;
+// interface User {
+//   id: number;
+//   fullname: string;
+//   username: string;
+//   email: string;
+//   colour: string;
+// }
+
+// interface Board {
+//   id: number;
+//   title: string;
+//   description: string;
+//   created_at: string;
+//   user: User;
+// }
+
+interface Membership {
+  user: number | undefined;
+  board: number | undefined;
 }
 
-export const addMembership = async (data: Memberships) => {
+export const addMembership = async (data: Membership) => {
   try {
     const response = await instance.post("/api/memberships/", data, {
-      headers: { Authorization: `Token ${token}` },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
     });
 
     return response.data;
   } catch (error) {
-    console.log("Error fetcing memberships.");
+    console.log("Error adding memberships.");
     throw error;
   }
-}
+};
 
 /**
  * BOARDS
@@ -49,7 +73,11 @@ export const addMembership = async (data: Memberships) => {
 export const fetchBoards = async () => {
   try {
     const response = await instance.get("/api/boards/", {
-      headers: { Authorization: `Token ${token}` },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
     });
 
     return response.data;
@@ -62,12 +90,17 @@ export const fetchBoards = async () => {
 interface BoardData {
   title: string;
   description: string;
+  user: number | undefined;
 }
 
 export const createBoard = async (data: BoardData) => {
   try {
     await instance.post("/api/boards/", data, {
-      headers: { Authorization: `Token ${token}` },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
     });
   } catch (error) {
     console.log("Error creating board.");
@@ -82,7 +115,11 @@ interface BoardId {
 export const getBoard = async (id: BoardData) => {
   try {
     const response = await instance.get(`/api/boards/${id}`, {
-      headers: { Authorization: `Token ${token}` },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
     });
 
     return response.data;
@@ -95,7 +132,11 @@ export const getBoard = async (id: BoardData) => {
 export const deleteBoard = async (id: BoardId) => {
   try {
     await instance.delete(`/api/boards/${id}`, {
-      headers: { Authorization: `Token ${token}` },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
     });
   } catch (error) {
     console.log("Error deleting board.");
@@ -114,7 +155,11 @@ export const deleteBoard = async (id: BoardId) => {
 export const searchUsers = async () => {
   try {
     const response = await instance.get(`/api/allusers/`, {
-      headers: { Authorization: `Token ${token}` },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {

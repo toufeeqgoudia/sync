@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useBoards } from "../../Hooks/useBoards";
-import { getMemberships } from "../../Utils/apiServices";
+import { getMemberships, addMembership } from "../../Utils/apiServices";
 import SearchUsers from "../../Components/SearchUsers";
 
 interface Board {
@@ -26,8 +26,10 @@ interface Memberships {
 
 const Members: React.FC = () => {
   const [memberships, setMemberships] = useState<Memberships[]>([]);
-  const [selectedBoard, setSelectedBoard] = useState<number | null>();
+  const [selectedBoard, setSelectedBoard] = useState<Board>();
+  const [selectedUser, setSelectedUser] = useState<User>();
   const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [fetchError, setFetchError] = useState<string>("");
   const { boards } = useBoards();
 
   useEffect(() => {
@@ -40,12 +42,44 @@ const Members: React.FC = () => {
   }, []);
 
   const filteredMemberships = memberships.filter(
-    (membership) => membership.board.id === selectedBoard
+    (membership) => membership.board.id === selectedBoard?.id
   );
 
   const handleSearchResults = (results: User[]) => {
     setSearchResults(results);
   };
+
+  console.log("selectedBoard: ", selectedBoard);
+  console.log("selectedUser: ", selectedUser);
+
+  const filteredUser = filteredMemberships.some(
+    (member) => member.user.id === selectedUser?.id
+  )
+
+  console.log('filteredUser: ', filteredUser)
+
+  const handleAddUserToBoard = async () => {
+    try {
+      if (selectedBoard === undefined || selectedBoard === null || selectedBoard.id === 0) {
+        setFetchError("*Please select a board.");
+      } else if (selectedUser === undefined || selectedUser === null || selectedUser.id === 0) {
+        setFetchError("*This user already belongs to this board.");
+      }else if (filteredUser === true) {
+        setFetchError("*This user already belongs to this board.");
+      } else if (filteredUser === false) {
+        setFetchError("")
+
+        await addMembership({ user: selectedUser, board: selectedBoard });
+
+        const updatedMembership = await getMemberships()
+        setMemberships(updatedMembership)
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  };
+
+  console.log('fetchError: ', fetchError)
 
   return (
     <div className="max-w-screen h-screen pt-28 pl-80 pr-8 flex justify-evenly items-start bg-gradient-to-tr from-purple-700 from-35% via-blue-500 to-teal-300">
@@ -53,7 +87,7 @@ const Members: React.FC = () => {
         <p className="text-lg text-white font-medium mb-2">Select board:</p>
         <select
           className="w-80 p-2 mb-6 text-sm outline-none rounded-md bg-white"
-          onChange={(e) => setSelectedBoard(Number(e.target.value))}
+          onChange={(e) => setSelectedBoard(e.target.value)}
         >
           <option value="">Select a Board</option>
           {boards?.map((board) => (
@@ -63,6 +97,8 @@ const Members: React.FC = () => {
           ))}
         </select>
         <p className="text-lg text-white font-medium mb-2">Invite members:</p>
+
+        {fetchError && <p className="text-white text-xs my-2">{fetchError}</p>}
 
         <SearchUsers handleSearchResults={handleSearchResults} />
 
@@ -74,7 +110,14 @@ const Members: React.FC = () => {
                 className="w-80 p-2 my-2 text-sm flex justify-between bg-white rounded-md"
               >
                 {user.email}
-                <button>Add</button>
+                <button
+                  onClick={() => {
+                    setSelectedUser(user);
+                    handleAddUserToBoard()
+                  }}
+                >
+                  Add
+                </button>
               </li>
             ))}
           </ul>

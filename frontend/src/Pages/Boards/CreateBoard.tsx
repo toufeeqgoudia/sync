@@ -1,10 +1,23 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { instance } from "../../Utils/apiServices";
+import {
+  createBoard,
+  fetchBoards,
+  addMembership,
+} from "../../Utils/apiServices";
+import { useAuth } from "../../Hooks/useAuth";
 
 interface FormData {
   title: string;
   description: string;
+}
+
+interface Board {
+  id: number;
+  title: string;
+  description: string;
+  created_at: string;
+  user: number;
 }
 
 const CreateBoard: React.FC = () => {
@@ -12,6 +25,7 @@ const CreateBoard: React.FC = () => {
     title: "",
     description: "",
   });
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (
@@ -27,18 +41,23 @@ const CreateBoard: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
+
     try {
-      await instance.post(
-        "/api/boards/",
-        {
-          title: formData.title,
-          description: formData.description,
-        },
-        {
-          headers: { Authorization: `Token ${token}` },
-        }
-      );
+      await createBoard({
+        title: formData.title,
+        description: formData.description,
+        user: user?.id,
+      });
+
+      const getAllBoards: Board[] = await fetchBoards();
+
+      const board = getAllBoards.filter(
+        (b) =>
+          b.title === formData.title && b.description === formData.description
+      )[0];
+
+      await addMembership({ user: user?.id, board: board?.id });
+
       navigate("/boards");
     } catch (error) {
       console.log("Error: ", error);
@@ -68,7 +87,7 @@ const CreateBoard: React.FC = () => {
           type="submit"
           className="w-20 p-2 text-white font-medium rounded-md bg-slate-400 self-end"
         >
-          Save
+          Create
         </button>
       </form>
     </div>

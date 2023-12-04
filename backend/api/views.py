@@ -1,7 +1,6 @@
 from rest_framework import generics
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
-from django.views.decorators.http import require_GET
 from django.http import JsonResponse
 from .models import Board, List, Card, Membership
 from .serializers import BoardSerializer, ListSerializer, CardSerializer, MembershipSerializer
@@ -57,9 +56,9 @@ class MembershipDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def search_users(request):
     query = request.GET.get('query', '')
     users = User.objects.filter(username__icontains=query)
-    user_list = [{'id': user.id, 'email': user.email} for user in users]
+    user_list = [{'id': user.id, 'email': user.email, 'username': user.username, 'fullname': user.fullname, 'colour': user.colour} for user in users]
     return JsonResponse({'users': user_list})
