@@ -1,40 +1,65 @@
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect, ChangeEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getBoard, instance } from "../../Utils/apiServices";
+import { useAuth } from "../../Hooks/useAuth";
 
 const token = localStorage.getItem("token");
 
+interface FormData {
+  title: string;
+  description: string;
+}
+
 const EditBoard: React.FC = () => {
-  const [editTitle, setEditTitle] = useState<string>("");
-  const [editDescription, setEditDescription] = useState<string>("");
+  const [formData, setFormData] = useState<FormData>({
+    title: "",
+    description: "",
+  });
   const location = useLocation();
   const boardId = location.state;
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchBoard = async () => {
       const response = await getBoard(boardId);
-      setEditTitle(response.title);
-      setEditDescription(response.description);
+      setFormData(response);
     };
     fetchBoard();
   }, [boardId]);
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prevFormData) => {
+      return {
+        ...prevFormData,
+        [e.target.name]: e.target.value,
+      };
+    });
+  };
 
   const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       await instance.put(
-        `/api/boards/${boardId}`,
+        `/api/boards/${boardId}/`,
         {
-          title: editTitle,
-          description: editDescription,
+          title: formData.title,
+          description: formData.description,
+          user: user?.id,
         },
         {
-          headers: { Authorization: `Token ${token}` },
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
         }
       );
       navigate("/boards");
+      window.location.reload();
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -64,15 +89,17 @@ const EditBoard: React.FC = () => {
       <form className="w-96 flex flex-col pt-16" onSubmit={handleEdit}>
         <p className="text-white mb-2">Title</p>
         <input
+          name="title"
           className="w-96 h-7 p-2 mb-6 outline-none rounded-md bg-white"
-          value={editTitle}
-          onChange={(e) => setEditTitle(e.target.value)}
+          value={formData.title}
+          onChange={handleChange}
         />
         <p className="text-white mb-2">Description</p>
         <textarea
+          name="description"
           className="w-96 h-20 p-2 mb-6 outline-none rounded-md bg-white"
-          value={editDescription}
-          onChange={(e) => setEditDescription(e.target.value)}
+          value={formData.description}
+          onChange={handleChange}
         />
         <button
           type="submit"

@@ -59,6 +59,7 @@ const CreateBoard: React.FC = () => {
       await addMembership({ user: user?.id, board: board?.id });
 
       navigate("/boards");
+      window.location.reload();
     } catch (error) {
       console.log("Error: ", error);
     }
