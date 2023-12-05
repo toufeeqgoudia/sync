@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 import { useBoards } from "../../Hooks/useBoards";
-import { getMemberships, addMembership } from "../../Utils/apiServices";
+import { getMemberships, addMembership, searchUsers } from "../../Utils/apiServices";
 import SearchUsers from "../../Components/SearchUsers";
-
-interface Board {
-  id: number;
-  title: string;
-  description: string;
-  created_at: string;
-}
 
 interface User {
   id: number;
@@ -20,14 +13,15 @@ interface User {
 
 interface Memberships {
   id: number;
-  board: Board;
-  user: User;
+  board: number;
+  user: number;
 }
 
 const Members: React.FC = () => {
   const [memberships, setMemberships] = useState<Memberships[]>([]);
-  const [selectedBoard, setSelectedBoard] = useState<Board>();
-  const [selectedUser, setSelectedUser] = useState<User>();
+  const [allUsers, setAllUsers] = useState<User[]>([])
+  const [selectedBoard, setSelectedBoard] = useState<number>();
+  const [selectedUser, setSelectedUser] = useState<number>();
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [fetchError, setFetchError] = useState<string>("");
   const { boards } = useBoards();
@@ -36,33 +30,37 @@ const Members: React.FC = () => {
     const fetchData = async () => {
       const members = await getMemberships();
       setMemberships(members);
+
+      const users = await searchUsers()
+      setAllUsers(users.users)
     };
 
     fetchData();
   }, []);
 
   const filteredMemberships = memberships.filter(
-    (membership) => membership.board.id === selectedBoard?.id
-  );
+    (membership) => membership.board === selectedBoard
+  )
+
+  const filteredMembershipsWithUsers = allUsers.filter(user => {
+    return filteredMemberships.some(mem => mem.user === user.id)
+  })
 
   const handleSearchResults = (results: User[]) => {
     setSearchResults(results);
   };
 
-  console.log("selectedBoard: ", selectedBoard);
-  console.log("selectedUser: ", selectedUser);
-
-  const filteredUser = filteredMemberships.some(
-    (member) => member.user.id === selectedUser?.id
+  const filteredUser = filteredMembershipsWithUsers.some(
+    (member) => member.id === selectedUser
   )
 
-  console.log('filteredUser: ', filteredUser)
+  console.log('filteredUser', filteredUser)
 
   const handleAddUserToBoard = async () => {
     try {
-      if (selectedBoard === undefined || selectedBoard === null || selectedBoard.id === 0) {
+      if (selectedBoard === undefined || selectedBoard === null || selectedBoard === 0) {
         setFetchError("*Please select a board.");
-      } else if (selectedUser === undefined || selectedUser === null || selectedUser.id === 0) {
+      } else if (selectedUser === undefined || selectedUser === null || selectedUser === 0) {
         setFetchError("*This user already belongs to this board.");
       }else if (filteredUser === true) {
         setFetchError("*This user already belongs to this board.");
@@ -79,15 +77,13 @@ const Members: React.FC = () => {
     }
   };
 
-  console.log('fetchError: ', fetchError)
-
   return (
     <div className="max-w-screen h-screen pt-28 pl-80 pr-8 flex justify-evenly items-start bg-gradient-to-tr from-purple-700 from-35% via-blue-500 to-teal-300">
       <div className="w-96 h-96">
         <p className="text-lg text-white font-medium mb-2">Select board:</p>
         <select
           className="w-80 p-2 mb-6 text-sm outline-none rounded-md bg-white"
-          onChange={(e) => setSelectedBoard(e.target.value)}
+          onChange={(e) => setSelectedBoard(Number(e.target.value))}
         >
           <option value="">Select a Board</option>
           {boards?.map((board) => (
@@ -112,7 +108,7 @@ const Members: React.FC = () => {
                 {user.email}
                 <button
                   onClick={() => {
-                    setSelectedUser(user);
+                    setSelectedUser(user.id);
                     handleAddUserToBoard()
                   }}
                 >
@@ -127,8 +123,8 @@ const Members: React.FC = () => {
       <div className="w-96 h-96 p-3 flex flex-col bg-white rounded-md">
         <p className="text-lg font-medium mb-2">Members:</p>
         <ul>
-          {filteredMemberships.map((member) => (
-            <li key={member.user.id}>{member.user.fullname}</li>
+          {filteredMembershipsWithUsers?.map((user) => (
+            <li key={user.id}>{user.fullname}</li>
           ))}
         </ul>
       </div>
