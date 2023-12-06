@@ -13,7 +13,7 @@ class ListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = List
-        fields = ['title', 'board']
+        fields = ['id', 'title', 'board']
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class CardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Card
-        fields = ['title', 'description', 'due_date', 'list']
+        fields = ['id', 'title', 'description', 'due_date', 'list']
 
 
 class MembershipSerializer(serializers.ModelSerializer):

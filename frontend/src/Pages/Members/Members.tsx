@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useBoards } from "../../Hooks/useBoards";
-import { getMemberships, addMembership, searchUsers } from "../../Utils/apiServices";
+import {
+  getMemberships,
+  addMembership,
+  searchUsers,
+} from "../../Utils/apiServices";
 import SearchUsers from "../../Components/SearchUsers";
 
 interface User {
@@ -19,7 +23,7 @@ interface Memberships {
 
 const Members: React.FC = () => {
   const [memberships, setMemberships] = useState<Memberships[]>([]);
-  const [allUsers, setAllUsers] = useState<User[]>([])
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [selectedBoard, setSelectedBoard] = useState<number>();
   const [selectedUser, setSelectedUser] = useState<number>();
   const [searchResults, setSearchResults] = useState<User[]>([]);
@@ -31,8 +35,8 @@ const Members: React.FC = () => {
       const members = await getMemberships();
       setMemberships(members);
 
-      const users = await searchUsers()
-      setAllUsers(users.users)
+      const users = await searchUsers();
+      setAllUsers(users.users);
     };
 
     fetchData();
@@ -40,11 +44,11 @@ const Members: React.FC = () => {
 
   const filteredMemberships = memberships.filter(
     (membership) => membership.board === selectedBoard
-  )
+  );
 
-  const filteredMembershipsWithUsers = allUsers.filter(user => {
-    return filteredMemberships.some(mem => mem.user === user.id)
-  })
+  const filteredMembershipsWithUsers = allUsers.filter((user) => {
+    return filteredMemberships.some((mem) => mem.user === user.id);
+  });
 
   const handleSearchResults = (results: User[]) => {
     setSearchResults(results);
@@ -52,25 +56,33 @@ const Members: React.FC = () => {
 
   const filteredUser = filteredMembershipsWithUsers.some(
     (member) => member.id === selectedUser
-  )
+  );
 
-  console.log('filteredUser', filteredUser)
+  console.log("filteredUser", filteredUser);
 
   const handleAddUserToBoard = async () => {
     try {
-      if (selectedBoard === undefined || selectedBoard === null || selectedBoard === 0) {
+      if (
+        selectedBoard === undefined ||
+        selectedBoard === null ||
+        selectedBoard === 0
+      ) {
         setFetchError("*Please select a board.");
-      } else if (selectedUser === undefined || selectedUser === null || selectedUser === 0) {
+      } else if (
+        selectedUser === undefined ||
+        selectedUser === null ||
+        selectedUser === 0
+      ) {
         setFetchError("*This user already belongs to this board.");
-      }else if (filteredUser === true) {
+      } else if (filteredUser === true) {
         setFetchError("*This user already belongs to this board.");
       } else if (filteredUser === false) {
-        setFetchError("")
+        setFetchError("");
 
         await addMembership({ user: selectedUser, board: selectedBoard });
 
-        const updatedMembership = await getMemberships()
-        setMemberships(updatedMembership)
+        const updatedMembership = await getMemberships();
+        setMemberships(updatedMembership);
       }
     } catch (error) {
       console.log("Error: ", error);
@@ -109,7 +121,7 @@ const Members: React.FC = () => {
                 <button
                   onClick={() => {
                     setSelectedUser(user.id);
-                    handleAddUserToBoard()
+                    handleAddUserToBoard();
                   }}
                 >
                   Add

@@ -148,6 +148,44 @@ export const deleteBoard = async (id: BoardId) => {
  * Lists
  */
 
+export const fetchLists = async () => {
+  try {
+    const response = await instance.get('/api/lists/', {
+      headers: {
+        Authorization: `Token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true,
+    })
+
+    return response.data
+  } catch (error) {
+    console.log("Error fetching cards.")
+    throw error;
+  }
+}
+
+/**
+ * Cards
+ */
+
+export const fetchCards = async () => {
+  try {
+    const response = await instance.get('/api/cards/', {
+      headers: {
+        Authorization: `Token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true,
+    })
+
+    return response.data
+  } catch (error) {
+    console.log("Error fetching cards.")
+    throw error;
+  }
+}
+
 /**
  * Search Users
  */
