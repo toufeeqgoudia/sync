@@ -58,8 +58,6 @@ const Members: React.FC = () => {
     (member) => member.id === selectedUser
   );
 
-  console.log("filteredUser", filteredUser);
-
   const handleAddUserToBoard = async () => {
     try {
       if (

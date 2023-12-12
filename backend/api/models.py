@@ -19,7 +19,7 @@ class List(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} - {self.board}"
     
 
 class Card(models.Model):

@@ -109,7 +109,7 @@ export const createBoard = async (data: BoardData) => {
 };
 
 interface BoardId {
-  id: string;
+  id: number;
 }
 
 export const getBoard = async (id: BoardData) => {
@@ -150,20 +150,35 @@ export const deleteBoard = async (id: BoardId) => {
 
 export const fetchLists = async () => {
   try {
-    const response = await instance.get('/api/lists/', {
+    const response = await instance.get("/api/lists/", {
       headers: {
         Authorization: `Token ${token}`,
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       withCredentials: true,
-    })
+    });
 
-    return response.data
+    return response.data;
   } catch (error) {
-    console.log("Error fetching cards.")
+    console.log("Error fetching lists.");
     throw error;
   }
-}
+};
+
+export const deleteList = async (id: number) => {
+  try {
+    await instance.delete(`/api/lists/${id}`, {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.log("Error deleting list.");
+    throw error;
+  }
+};
 
 /**
  * Cards
@@ -171,20 +186,35 @@ export const fetchLists = async () => {
 
 export const fetchCards = async () => {
   try {
-    const response = await instance.get('/api/cards/', {
+    const response = await instance.get("/api/cards/", {
       headers: {
         Authorization: `Token ${token}`,
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       withCredentials: true,
-    })
+    });
 
-    return response.data
+    return response.data;
   } catch (error) {
-    console.log("Error fetching cards.")
+    console.log("Error fetching cards.");
     throw error;
   }
-}
+};
+
+export const deleteCard = async (id: number) => {
+  try {
+    await instance.delete(`/api/cards/${id}`, {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.log("Error deleting card.");
+    throw error;
+  }
+};
 
 /**
  * Search Users
